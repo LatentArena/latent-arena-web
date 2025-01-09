@@ -48,7 +48,7 @@ export default function HeroSection() {
 
       {/* Subtitle with simple reveal animation */}
       <motion.p
-        className="mt-6 bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-600 bg-clip-text text-xl text-transparent md:text-2xl"
+        className="mt-6 max-w-[90vw] bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-600 bg-clip-text px-4 text-center text-lg text-transparent sm:text-xl md:max-w-3xl md:px-0 md:text-2xl"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.3 }}
