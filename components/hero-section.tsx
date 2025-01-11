@@ -25,12 +25,12 @@ export default function HeroSection() {
       </motion.div>
 
       {/* Sparkles effect */}
-      <div className="relative h-40 w-[40rem]">
+      <div className="relative h-40 w-full max-w-[90vw] md:max-w-[40rem]">
         {/* Gradients */}
-        <div className="absolute inset-x-20 top-0 h-[2px] w-3/4 bg-gradient-to-r from-transparent via-yellow-500 to-transparent blur-sm" />
-        <div className="absolute inset-x-20 top-0 h-px w-3/4 bg-gradient-to-r from-transparent via-yellow-500 to-transparent" />
-        <div className="absolute inset-x-60 top-0 h-[5px] w-1/4 bg-gradient-to-r from-transparent via-yellow-400 to-transparent blur-sm" />
-        <div className="absolute inset-x-60 top-0 h-px w-1/4 bg-gradient-to-r from-transparent via-yellow-400 to-transparent" />
+        <div className="absolute inset-x-[10%] top-0 h-[2px] w-3/4 bg-gradient-to-r from-transparent via-yellow-500 to-transparent blur-sm md:inset-x-20" />
+        <div className="absolute inset-x-[10%] top-0 h-px w-3/4 bg-gradient-to-r from-transparent via-yellow-500 to-transparent md:inset-x-20" />
+        <div className="absolute inset-x-[30%] top-0 h-[5px] w-1/4 bg-gradient-to-r from-transparent via-yellow-400 to-transparent blur-sm md:inset-x-60" />
+        <div className="absolute inset-x-[30%] top-0 h-px w-1/4 bg-gradient-to-r from-transparent via-yellow-400 to-transparent md:inset-x-60" />
 
         {/* Core component */}
         <SparklesCore

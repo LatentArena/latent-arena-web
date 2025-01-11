@@ -30,54 +30,30 @@ const steps = [
   },
 ]
 
-const textGenerateEffect = {
-  hidden: {
-    opacity: 0,
-    y: 20,
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-  },
-}
-
 export function HowItWorks() {
-  const text = 'How It Works'
-
   return (
     <div className="mx-auto max-w-6xl px-4 py-16">
-      <div className="mb-16 text-center">
-        <motion.div className="inline-block bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-600 bg-clip-text text-4xl font-bold text-transparent">
-          {text.split('').map((char, index) => (
-            <motion.span
-              key={index}
-              variants={textGenerateEffect}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              transition={{
-                duration: 0.1,
-                delay: index * 0.1,
-                ease: 'easeOut',
-              }}
-              className="inline-block"
-            >
-              {char === ' ' ? '\u00A0' : char}
-            </motion.span>
-          ))}
-        </motion.div>
-      </div>
+      <motion.div
+        className="mb-16 text-center"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+      >
+        <h2 className="inline-block bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-600 bg-clip-text text-4xl font-bold text-transparent">
+          How It Works?
+        </h2>
+      </motion.div>
 
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-        {steps.map((step, index) => (
-          <motion.div
-            key={step.title}
-            className="group relative"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: index * 0.15 }}
-          >
+      <motion.div
+        className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
+        {steps.map((step) => (
+          <div key={step.title} className="group relative">
             <div
               className={cn(
                 'absolute inset-0 rounded-2xl bg-gradient-to-r opacity-20 blur-xl transition-all duration-500 group-hover:opacity-40',
@@ -100,9 +76,9 @@ export function HowItWorks() {
                 <p className="text-sm leading-relaxed text-zinc-400">{step.description}</p>
               </div>
             </div>
-          </motion.div>
+          </div>
         ))}
-      </div>
+      </motion.div>
     </div>
   )
 }

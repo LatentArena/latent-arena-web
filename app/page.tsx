@@ -71,7 +71,7 @@ export default function Home({
       </section>
 
       {/* Lamp Effect with Waitlist */}
-      <section id="waitlist" className="w-full scroll-mt-20 pb-8">
+      <section id="waitlist" className="w-full scroll-mt-20 pb-4">
         <LampDemo>
           <div className="container mx-auto px-4">
             <WaitlistForm />

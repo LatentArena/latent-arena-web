@@ -4,17 +4,6 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { GoogleLogo, AirbnbLogo, AdobeLogo } from './logos/company-logos'
 
-const textGenerateEffect = {
-  hidden: {
-    opacity: 0,
-    y: 20,
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-  },
-}
-
 const companies = [
   { name: 'Google', Logo: GoogleLogo },
   { name: 'Airbnb', Logo: AirbnbLogo },
@@ -22,41 +11,29 @@ const companies = [
 ]
 
 export function AchievementsSection() {
-  const text = 'Achievements'
-
   return (
-    <section className="mx-auto max-w-6xl px-4 pb-16">
-      <div className="mb-12 text-center">
-        <motion.div className="inline-block bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-600 bg-clip-text text-4xl font-bold text-transparent">
-          {text.split('').map((char, index) => (
-            <motion.span
-              key={index}
-              variants={textGenerateEffect}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              transition={{
-                duration: 0.1,
-                delay: index * 0.1,
-                ease: 'easeOut',
-              }}
-              className="inline-block"
-            >
-              {char}
-            </motion.span>
-          ))}
-        </motion.div>
-      </div>
+    <section className="mx-auto max-w-6xl px-4 pb-16 pt-8">
+      <motion.div
+        className="mb-12 text-center"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+      >
+        <h2 className="inline-block bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-600 bg-clip-text text-4xl font-bold text-transparent">
+          Achievements
+        </h2>
+      </motion.div>
 
-      <div className="grid gap-8 md:grid-cols-2">
+      <motion.div
+        className="grid gap-8 md:grid-cols-2"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
         {/* Hackathon Winner Card */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="group relative overflow-hidden rounded-2xl border border-zinc-800 bg-black/50 p-6 backdrop-blur-sm"
-        >
+        <div className="group relative overflow-hidden rounded-2xl border border-zinc-800 bg-black/50 p-6 backdrop-blur-sm">
           <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-yellow-500/10 opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-100" />
           <div className="relative">
             <div className="mb-4 flex items-center gap-2">
@@ -77,16 +54,10 @@ export function AchievementsSection() {
               View Project →
             </Link>
           </div>
-        </motion.div>
+        </div>
 
         {/* Team Credentials Card */}
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="group relative overflow-hidden rounded-2xl border border-zinc-800 bg-black/50 p-6 backdrop-blur-sm"
-        >
+        <div className="group relative overflow-hidden rounded-2xl border border-zinc-800 bg-black/50 p-6 backdrop-blur-sm">
           <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-cyan-500/10 to-teal-500/10 opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-100" />
           <div className="relative">
             <div className="mb-4 flex items-center gap-2">
@@ -110,8 +81,8 @@ export function AchievementsSection() {
               ))}
             </div>
           </div>
-        </motion.div>
-      </div>
+        </div>
+      </motion.div>
     </section>
   )
 }
