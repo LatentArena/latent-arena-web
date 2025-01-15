@@ -1,159 +1,108 @@
-# PREDEX: Product Requirements Document
+# LatentArena
 
-Latent Arena is a web3 content betting platform inspired by show called Kill Tony.
-Core Concept:
+An AI-driven decentralized content prediction platform combining creator monetization, AI evaluation, and prediction markets.
 
-- Creator-focused platform where users upload performance content
-- AI judges with unique personalities review and score content
-- Community members bet on scores through Solana smart contracts
-- 24-hour pools split: 45% creator, 45% winning audience, 10% operations
-- Similar to "Kill Tony" format but decentralized and AI-powered
+## Overview
 
-## 1. Product Overview
+LatentArena reimagines content platforms by introducing a prediction market mechanism that aligns creators and consumers through a novel three-party system:
 
-### 1.1 Purpose
+- Content creators upload short-form video content
+- AI judges with distinct personalities evaluate content
+- Users make range-based predictions on content scores
 
-A decentralized platform that enables users to make predictions on content engagement through a web application and browser extension, primarily integrated with YouTube.
+## Key Features
 
-### 1.2 Product Components
+- Decentralized prediction markets for content evaluation
+- AI-powered judging system with distinct personality frameworks
+- Self-assessment mechanisms for creators
+- Range-based prediction system with variable risk/reward
+- Fair monetization from first upload
+- Anti-piracy protection through content fingerprinting
 
-- Landing page (Web)
-- Main application (Web-based dApp)
-- Browser extension (Chrome/Firefox)
-- Backend moderation system
-- Smart contract infrastructure
+## Technical Architecture
 
-## 2. User Interfaces
+### Content Management
 
-### 2.1 Landing Page
+- Video duration: Up to 120 seconds
+- Supported formats: MP4, MOV, AVI
+- Cloud-based distributed storage
+- Content addressing via SHA-256 hashing
+- IPFS integration (planned)
 
-#### Requirements
+### AI Judge System
 
-- Clean, modern design showcasing platform concept
-- "Launch App" button prominently displayed
-- Browser extension download/install link
-- Platform value proposition
-- Quick start guide
-- FAQ section
+- Pool of 8 distinct AI personalities
+- 4 judges randomly selected per evaluation
+- Specialized domain expertise
+- Personality-driven commentary
+- Multiple evaluation criteria including technical quality, creativity, engagement
 
-### 2.2 Browser Extension
+### Prediction System
 
-#### Core Functionality
-
-- Injects UI elements below YouTube videos
-- Displays submission button for new content
-- Shows prediction interface for live content
-- Provides quick access to main dApp
-
-#### UI Elements for YouTube Integration
-
-- "Submit to PREDEX" button (for new content)
-- Countdown timer (for live content)
-- Range slider for predictions
-- Stake amount selector (Tier 1/Tier 2)
-- Submit prediction button
-- Link to full dApp interface
-
-### 2.3 Main dApp (Discovery Page)
-
-#### Features
-
-- Content grid/list view
-- Filtering and sorting options
-- Live countdown timers
-- Prediction interface for each content
-- Statistics display
-- Wallet connection
-- User dashboard
-
-## 3. User Flows
-
-### 3.1 Content Submission Flow
-
-1. User finds YouTube video
-2. Clicks "Submit to PREDEX" via extension
-3. Connects wallet if not connected
-4. Selects stake tier
-5. Optional: Provides self-score
-6. Submits content
-7. Receives confirmation of submission
-8. Backend moderation process begins
-9. Notification when content goes live
-
-### 3.2 Prediction Flow
-
-1. User discovers content (via extension or dApp)
-2. Connects wallet if not connected
-3. Selects stake tier
-4. Adjusts prediction range slider
-5. Reviews potential rewards
-6. Confirms prediction
-7. Receives confirmation of stake
-
-### 3.3 Results & Rewards Flow
-
-1. Prediction window closes
-2. AI judges evaluate content
-3. Final scores calculated
-4. Rewards distributed
-5. Users notified of results
-6. Statistics updated
-
-## 4. Technical Requirements
-
-### 4.1 Browser Extension
-
-- Support for Chrome and Firefox
-- YouTube page detection
-- DOM manipulation for UI injection
-- Wallet integration
-- API communication with main platform
-
-### 4.2 Backend Systems
-
-- Content moderation queue
-- AI judge system integration
-- User authentication
-- Blockchain interaction
-- API endpoints for extension and dApp
-
-### 4.3 Smart Contracts
-
-- Stake management
-- Range-based prediction logic
-- Reward distribution
-- Creator payments
-
-## 5. Performance Requirements
-
-- Extension load time: < 2 seconds
-- UI injection time: < 1 second
-- Prediction submission time: < 5 seconds
-- Content moderation time: < 12 hours
-- Smart contract interaction time: < 30 seconds
-
-## 6. Security Requirements
-
-- Secure wallet connections
-- Content verification
-- Stake protection
-- Rate limiting
-- Anti-spam measures
-
-## 7. MVP Features vs Future Enhancements
-
-### 7.1 MVP Features
-
-- YouTube integration via extension
-- Basic prediction functionality
+- 24-hour prediction windows
+- Multiple range options (0.1, 0.25, 0.5, 1.0)
+- Corresponding multipliers (8x, 4x, 2x, 1x)
 - Two-tier staking system
-- AI judge evaluation
-- Reward distribution
+- Fair reward distribution model
 
-### 7.2 Future Enhancements
+## Getting Started
 
-- Additional platform integrations
-- Mobile app
-- Advanced analytics
-- Social features
-- Creator dashboard
+### Prerequisites
+
+- Node.js v16+
+- Solana CLI
+- Rust compiler
+
+### Installation
+
+```bash
+git clone https://github.com/yourusername/latentarena
+cd latentarena
+npm install
+```
+
+### Local Development
+
+```bash
+npm run dev
+```
+
+### Building
+
+```bash
+npm run build
+```
+
+## Contributing
+
+We welcome contributions! Please read our [Contributing Guidelines](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md) before submitting PRs.
+
+### Development Process
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit changes
+4. Push to your fork
+5. Submit a pull request
+
+## Whitepaper
+
+- [Technical Whitepaper](public/docs/whitepaper.pdf)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Security
+
+Found a security issue? Please report it confidentially to security@latentarena.com.
+
+## Community
+
+- [Discord](https://discord.gg/latentarena)
+- [Twitter](https://twitter.com/latentarena)
+- [Blog](https://blog.latentarena.com)
+
+## Acknowledgments
+
+Thanks to all contributors and community members who have helped shape this project.

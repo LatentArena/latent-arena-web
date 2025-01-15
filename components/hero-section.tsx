@@ -64,7 +64,8 @@ export default function HeroSection() {
         transition={{ delay: 0.4, duration: 0.5 }}
       >
         <Link
-          href="/whitepaper"
+          href="/docs/whitepaper.pdf"
+          target="_blank"
           className="inline-flex h-12 items-center justify-center rounded-full border border-yellow-400 bg-transparent px-8 text-yellow-400 transition-colors hover:bg-yellow-400 hover:text-black"
         >
           Whitepaper
