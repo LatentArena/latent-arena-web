@@ -5,17 +5,20 @@ import Link from 'next/link'
 import { SparklesCore } from './ui/sparkles'
 import { ShimmerText } from './ui/shimmer-text'
 
+const preTitle = 'Where Viral Meets Verdict'
+const postTitle = 'Betting on content, powered by AI'
+
 export default function HeroSection() {
   return (
     <div className="relative flex flex-col items-center text-center">
-      {/* Top subtitle */}
+      {/* Pre-title text */}
       <motion.p
-        className="mt-20 max-w-[90vw] bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-600 bg-clip-text px-4 text-center text-lg text-transparent sm:text-xl md:max-w-3xl md:px-0 md:text-2xl"
+        className="mt-12 bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-600 bg-clip-text text-lg text-transparent sm:text-xl md:text-2xl"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        Where Viral Meets Verdict
+        {preTitle}
       </motion.p>
 
       {/* Title with subtle animation */}
@@ -24,7 +27,7 @@ export default function HeroSection() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
       >
-        <ShimmerText className="font-cubao mt-6 text-6xl tracking-wide md:text-8xl">
+        <ShimmerText className="font-cubao mt-4 text-6xl tracking-wide md:text-8xl">
           LATENT
         </ShimmerText>
         <ShimmerText className="font-cubao mt-1 text-6xl tracking-wide md:text-8xl">
@@ -33,12 +36,12 @@ export default function HeroSection() {
       </motion.div>
 
       {/* Sparkles effect */}
-      <div className="relative h-40 w-full max-w-[90vw] md:max-w-[40rem]">
+      <div className="relative h-40 w-full max-w-[90vw] md:max-w-[600px]">
         {/* Gradients */}
-        <div className="absolute inset-x-[10%] top-0 h-[2px] w-3/4 bg-gradient-to-r from-transparent via-yellow-500 to-transparent blur-sm md:inset-x-20" />
-        <div className="absolute inset-x-[10%] top-0 h-px w-3/4 bg-gradient-to-r from-transparent via-yellow-500 to-transparent md:inset-x-20" />
-        <div className="absolute inset-x-[30%] top-0 h-[5px] w-1/4 bg-gradient-to-r from-transparent via-yellow-400 to-transparent blur-sm md:inset-x-60" />
-        <div className="absolute inset-x-[30%] top-0 h-px w-1/4 bg-gradient-to-r from-transparent via-yellow-400 to-transparent md:inset-x-60" />
+        <div className="absolute inset-x-[10%] top-0 h-[2px] w-4/5 bg-gradient-to-r from-transparent via-yellow-500 to-transparent blur-sm" />
+        <div className="absolute inset-x-[10%] top-0 h-px w-4/5 bg-gradient-to-r from-transparent via-yellow-500 to-transparent" />
+        <div className="absolute inset-x-[25%] top-0 h-[5px] w-1/2 bg-gradient-to-r from-transparent via-yellow-400 to-transparent blur-sm" />
+        <div className="absolute inset-x-[25%] top-0 h-px w-1/2 bg-gradient-to-r from-transparent via-yellow-400 to-transparent" />
 
         {/* Core component */}
         <SparklesCore
@@ -54,14 +57,14 @@ export default function HeroSection() {
         <div className="absolute inset-0 h-full w-full bg-black [mask-image:radial-gradient(350px_200px_at_top,transparent_20%,white)]"></div>
       </div>
 
-      {/* Bottom subtitle */}
+      {/* Post-title text */}
       <motion.p
         className="mt-6 max-w-[90vw] bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-600 bg-clip-text px-4 text-center text-lg text-transparent sm:text-xl md:max-w-3xl md:px-0 md:text-2xl"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.4 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
       >
-        Betting on content, powered by AI
+        {postTitle}
       </motion.p>
 
       {/* CTA Buttons */}
