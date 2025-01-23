@@ -3,7 +3,6 @@
 import HeroSection from '@/components/hero-section'
 import { WaitlistForm } from '@/components/waitlist-form'
 import { HowItWorks } from '@/components/how-it-works'
-import { motion } from 'framer-motion'
 import { LampDemo } from '@/components/ui/lamp'
 import { useEffect } from 'react'
 import { useToast } from '@/hooks/use-toast'
@@ -23,29 +22,43 @@ export default function Home({
     if (verified) {
       toast({
         title: 'Email verified!',
-        description: "You've been successfully added to the waitlist. We'll be in touch soon!",
+        description: "You've been successfully added to the waitlist. We'll be in touch soon.",
       })
     } else if (error) {
       const errorMessages: { [key: string]: { title: string; description: string } } = {
         expired: {
           title: 'Link Expired',
-          description: message || 'Email verification link has expired. Please request a new one.',
+          description:
+            message ||
+            'Your verification link has expired. Please go to the waitlist section and submit your email again for a new link.',
         },
         invalid: {
           title: 'Invalid Link',
-          description: message || 'Invalid verification link. Please try again.',
+          description:
+            message ||
+            "This verification link is invalid or has already been used. Please ensure you're using the most recent link sent to your email.",
+        },
+        unauthorized: {
+          title: 'Unauthorized',
+          description:
+            message ||
+            "You are not authorized to verify this email. Please ensure you're using the correct link.",
         },
         database: {
           title: 'Database Error',
-          description: message || 'Failed to update verification status. Please try again.',
+          description:
+            message ||
+            'We encountered an issue updating your verification status. Please try again or contact support.',
         },
         session: {
           title: 'Session Error',
-          description: message || 'No active session found. Please try signing up again.',
+          description: message || "We couldn't establish a session. Please try signing up again.",
         },
         unknown: {
-          title: 'Error',
-          description: message || 'An unexpected error occurred. Please try again.',
+          title: 'Verification Error',
+          description:
+            message ||
+            'An unexpected error occurred during verification. Please try again or contact our support team.',
         },
       }
 
@@ -54,6 +67,7 @@ export default function Home({
         title: errorInfo.title,
         description: errorInfo.description,
         variant: 'destructive',
+        duration: 6000, // Show for 6 seconds since these are important messages
       })
     }
   }, [verified, error, message, toast])
