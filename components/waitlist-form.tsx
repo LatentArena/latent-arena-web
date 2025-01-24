@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
@@ -18,14 +18,26 @@ import { useToast } from '@/hooks/use-toast'
 import { supabase } from '@/lib/supabase'
 
 const formSchema = z.object({
-  email: z.string().email(),
-  wallet: z.string().optional(),
-  twitter: z.string().optional(),
+  email: z.string().email('Please enter a valid email address'),
+  wallet: z
+    .string()
+    .optional()
+    .refine(
+      (val) => !val || /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(val),
+      'Please enter a valid Solana wallet address'
+    ),
+  twitter: z
+    .string()
+    .optional()
+    .refine((val) => !val || /^@?(\w){1,15}$/.test(val), 'Please enter a valid Twitter handle')
+    .transform((val) => (!val ? '' : val.startsWith('@') ? val : `@${val}`)),
 })
 
 export function WaitlistForm() {
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
+  const [submitCount, setSubmitCount] = useState(0)
+  const lastSubmitTime = useRef<number>(0)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -33,60 +45,71 @@ export function WaitlistForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      setIsLoading(true)
-
-      // Check if email already exists in waitlist
-      const { data: existingEntries, error: checkError } = await supabase
-        .from('waitlist')
-        .select('email, verified')
-        .eq('email', values.email)
-
-      if (checkError) {
-        throw checkError
-      }
-
-      const existingEntry = existingEntries?.[0]
-
-      if (existingEntry?.verified) {
+      // Rate limiting: Allow only 3 submissions per minute
+      const now = Date.now()
+      if (submitCount >= 3 && now - lastSubmitTime.current < 60000) {
         toast({
-          title: 'Already Verified',
-          description: 'This email is already verified and on our waitlist.',
+          title: 'Too Many Attempts',
+          description: 'Please wait a minute before trying again.',
           variant: 'destructive',
         })
         return
       }
 
-      // Insert or update the waitlist entry first
-      const { error: dbError } = await supabase.from('waitlist').upsert(
-        {
-          email: values.email,
-          wallet_address: values.wallet || null,
-          twitter_handle: values.twitter || null,
-          verified: false,
-        },
-        { onConflict: 'email' }
-      )
+      setIsLoading(true)
+      setSubmitCount((prev) => prev + 1)
+      lastSubmitTime.current = now
 
-      if (dbError) throw dbError
-
-      // Then send the verification email
-      const { error: authError } = await supabase.auth.signInWithOtp({
+      // Use signUp for new users
+      const { error: authError } = await supabase.auth.signUp({
         email: values.email,
+        password: crypto.randomUUID(), // Generate a random password since we won't use it
         options: {
-          shouldCreateUser: true,
+          emailRedirectTo: process.env.NEXT_PUBLIC_SITE_URL?.startsWith('http://localhost')
+            ? `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`
+            : 'https://latentarena.xyz/auth/callback',
           data: {
             email: values.email,
-            wallet_address: values.wallet || null,
-            twitter_handle: values.twitter || null,
+            wallet_address: values.wallet || '',
+            twitter_handle: values.twitter || '',
+            joined_waitlist_at: new Date().toISOString(),
           },
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       })
 
-      if (authError) throw authError
+      if (authError) {
+        // Handle rate limiting error specifically
+        if (authError.message.includes('rate limit')) {
+          toast({
+            title: 'Too Many Attempts',
+            description: 'Please wait a few minutes before requesting another verification email.',
+            variant: 'destructive',
+          })
+          return
+        }
+        // If user exists but not verified, resend verification email
+        if (authError.message.includes('User already registered')) {
+          const { error: resendError } = await supabase.auth.resend({
+            type: 'signup',
+            email: values.email,
+            options: {
+              emailRedirectTo: process.env.NEXT_PUBLIC_SITE_URL?.startsWith('http://localhost')
+                ? `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`
+                : 'https://latentarena.xyz/auth/callback',
+            },
+          })
+          if (resendError) throw resendError
+          toast({
+            title: 'Verification Email Resent',
+            description: 'Please check your email to verify your address.',
+          })
+          return
+        }
+        throw authError
+      }
 
       toast({
-        title: existingEntry ? 'Verification Email Resent' : 'Verification email sent!',
+        title: 'Verification Email Sent',
         description: 'Please check your email to verify your address.',
       })
       form.reset()
@@ -94,12 +117,15 @@ export function WaitlistForm() {
       console.error('Error:', error)
       let errorMessage = 'There was a problem joining the waitlist. Please try again.'
 
-      // Check if it's an email sending error
-      if (error instanceof Error && error.message.includes('send email')) {
-        errorMessage =
-          'Unable to send verification email. Our team has been notified. Please try again later.'
-        // Log the error for monitoring
-        console.error('Email sending error:', error)
+      if (error instanceof Error) {
+        if (error.message.includes('send email')) {
+          errorMessage =
+            'Unable to send verification email. Our team has been notified. Please try again later.'
+        } else if (error.message.includes('User already registered')) {
+          errorMessage =
+            'This email is already registered. Please check your inbox for the verification email or try signing up with a different email.'
+        }
+        console.error('Detailed error:', error)
       }
 
       toast({

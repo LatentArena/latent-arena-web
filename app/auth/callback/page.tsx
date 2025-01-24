@@ -1,98 +1,164 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { motion } from 'framer-motion'
+
+const VerificationAnimation = () => {
+  return (
+    <div className="relative">
+      {/* Background pulse effect */}
+      <motion.div
+        className="absolute -inset-4 rounded-full bg-gradient-to-r from-yellow-400/20 via-yellow-500/20 to-yellow-400/20"
+        animate={{
+          scale: [1, 1.2, 1],
+          opacity: [0.3, 0.7, 0.3],
+          rotate: [0, 180, 360],
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+      />
+
+      {/* Outer glowing ring */}
+      <motion.div
+        className="absolute -inset-8 rounded-full border-2 border-yellow-400/30"
+        animate={{
+          scale: [1, 1.1, 1],
+          opacity: [0.3, 0.7, 0.3],
+          rotate: [0, -180, -360],
+        }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          ease: 'linear',
+        }}
+      />
+
+      {/* Inner spinning hexagon */}
+      <motion.div
+        className="relative h-24 w-24"
+        animate={{
+          rotate: 360,
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          ease: 'linear',
+        }}
+      >
+        <svg
+          viewBox="0 0 24 24"
+          className="h-full w-full text-yellow-400 drop-shadow-[0_0_10px_rgba(250,204,21,0.7)]"
+          fill="currentColor"
+        >
+          <path d="M12 2l8.66 5v10L12 22l-8.66-5V7L12 2z" />
+        </svg>
+
+        {/* Center dot */}
+        <motion.div
+          className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
+          animate={{
+            scale: [1, 1.5, 1],
+            opacity: [0.5, 1, 0.5],
+          }}
+          transition={{
+            duration: 1,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+      </motion.div>
+
+      {/* Floating particles */}
+      <motion.div className="absolute -inset-12" initial="initial" animate="animate">
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute h-2 w-2 rounded-full bg-yellow-400/60 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]"
+            initial={{ scale: 0, x: 0, y: 0 }}
+            animate={{
+              scale: [0, 1, 0],
+              x: [0, (i % 2 ? 80 : -80) * Math.random()],
+              y: [0, -80 * Math.random()],
+              opacity: [0, 1, 0],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              delay: i * 0.2,
+              ease: 'easeOut',
+            }}
+          />
+        ))}
+      </motion.div>
+
+      {/* Loading text */}
+      <motion.div
+        className="absolute -bottom-16 left-1/2 -translate-x-1/2 whitespace-nowrap text-sm text-yellow-400/80"
+        animate={{
+          opacity: [0.5, 1, 0.5],
+        }}
+        transition={{
+          duration: 1.5,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+      >
+        INITIALIZING...
+      </motion.div>
+    </div>
+  )
+}
 
 export default function AuthCallbackPage() {
   const router = useRouter()
   const supabase = createClientComponentClient()
+  const [verificationState, setVerificationState] = useState<'verifying' | 'success' | 'error'>(
+    'verifying'
+  )
+  const [errorMessage, setErrorMessage] = useState<string>('')
 
   useEffect(() => {
     async function handleCallback() {
       try {
-        // Get hash parameters from URL
-        const hashParams = new URLSearchParams(window.location.hash.slice(1))
-        const accessToken = hashParams.get('access_token')
-        const refreshToken = hashParams.get('refresh_token')
-        const error = hashParams.get('error')
-        const errorCode = hashParams.get('error_code')
-        const errorDescription = hashParams.get('error_description')
+        // Get the user's session first
+        const {
+          data: { session },
+        } = await supabase.auth.getSession()
 
-        if (error) {
-          switch (errorCode) {
-            case 'otp_expired':
-              router.push(
-                `/?error=expired&message=${encodeURIComponent('Your verification link has expired. Please go to the waitlist section and submit your email again for a new link.')}`
-              )
-              return
-            case 'access_denied':
-              router.push(
-                `/?error=invalid&message=${encodeURIComponent("This verification link is invalid. Please ensure you're using the most recent link sent to your email.")}`
-              )
-              return
-            case 'invalid_grant':
-              router.push(
-                `/?error=invalid&message=${encodeURIComponent('This verification link has already been used. Please request a new one if needed.')}`
-              )
-              return
-            case 'unauthorized':
-              router.push(
-                `/?error=unauthorized&message=${encodeURIComponent("You are not authorized to verify this email. Please ensure you're using the correct link.")}`
-              )
-              return
-            default:
-              router.push(
-                `/?error=unknown&message=${encodeURIComponent(errorDescription || 'An error occurred during verification. Please try again or contact support.')}`
-              )
-              return
-          }
+        // If we have a session and the user is confirmed, consider it a success
+        if (session?.user?.email_confirmed_at) {
+          setVerificationState('success')
+          router.push('/?verified=true')
+          return
         }
 
-        if (accessToken && refreshToken) {
-          // Set the session using the tokens from the URL
-          const { error: sessionError } = await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken,
-          })
+        // If no immediate success, wait briefly and check again
+        await new Promise((resolve) => setTimeout(resolve, 2000))
+        const {
+          data: { session: refreshedSession },
+        } = await supabase.auth.getSession()
 
-          if (sessionError) {
-            console.error('Session error:', sessionError)
-            router.push(
-              `/?error=session&message=${encodeURIComponent('Failed to establish session. Please try again.')}`
-            )
-            return
-          }
-
-          // Get the user's session
-          const {
-            data: { session },
-          } = await supabase.auth.getSession()
-
-          if (session?.user?.email) {
-            // Update the waitlist entry to mark it as verified
-            const { error: dbError } = await supabase
-              .from('waitlist')
-              .update({ verified: true })
-              .eq('email', session.user.email)
-
-            if (dbError) {
-              console.error('Database update error:', dbError)
-              router.push(
-                `/?error=database&message=${encodeURIComponent('Failed to update verification status. Please try again.')}`
-              )
-              return
-            }
-
-            router.push('/?verified=true')
-          } else {
-            router.push(
-              `/?error=session&message=${encodeURIComponent('No active session found. Please try signing up again.')}`
-            )
-          }
+        if (refreshedSession?.user?.email_confirmed_at) {
+          setVerificationState('success')
+          router.push('/?verified=true')
+          return
         }
+
+        // If still no success, show error
+        setVerificationState('error')
+        setErrorMessage('Unable to verify email. Please try again.')
+        router.push(
+          `/?error=session&message=${encodeURIComponent('Unable to verify email. Please try again.')}`
+        )
       } catch (error) {
-        console.error('Auth callback error:', error)
+        console.error('Verification error:', error)
+        setVerificationState('error')
+        setErrorMessage('An unexpected error occurred')
         router.push(
           `/?error=unknown&message=${encodeURIComponent('An unexpected error occurred. Please try again.')}`
         )
@@ -103,10 +169,48 @@ export default function AuthCallbackPage() {
   }, [router, supabase])
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-black">
-      <div className="text-center">
-        <h2 className="mb-4 text-2xl font-bold text-white">Verifying your email...</h2>
-        <p className="text-yellow-400">Please wait while we complete the verification process.</p>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-black">
+      <div className="relative text-center">
+        {verificationState === 'verifying' && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col items-center space-y-8"
+          >
+            <VerificationAnimation />
+            <div className="space-y-2">
+              <h2 className="text-2xl font-bold text-white">Preparing Your Arena Access...</h2>
+              <p className="text-yellow-400">
+                Validating your credentials for early access to Latent Arena
+              </p>
+            </div>
+          </motion.div>
+        )}
+        {verificationState === 'success' && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="space-y-4"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', bounce: 0.5 }}
+              className="mx-auto mb-6 text-6xl"
+            >
+              🎮
+            </motion.div>
+            <h2 className="mb-4 text-2xl font-bold text-white">Welcome to Latent Arena!</h2>
+            <p className="text-yellow-400">You&apos;re now on the exclusive early access list.</p>
+          </motion.div>
+        )}
+        {verificationState === 'error' && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+            <h2 className="mb-4 text-2xl font-bold text-white">Verification Failed</h2>
+            <p className="text-yellow-400">{errorMessage}</p>
+            <p className="mt-4 text-white">Redirecting you back...</p>
+          </motion.div>
+        )}
       </div>
     </div>
   )
