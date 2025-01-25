@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { motion } from 'framer-motion'
@@ -121,45 +121,81 @@ export default function AuthCallbackPage() {
     'verifying'
   )
   const [errorMessage, setErrorMessage] = useState<string>('')
+  const hasAttemptedVerification = useRef(false)
 
   useEffect(() => {
     async function handleCallback() {
+      if (hasAttemptedVerification.current) {
+        console.log('Verification already attempted, skipping...')
+        return
+      }
+      hasAttemptedVerification.current = true
+
       try {
-        // Get the user's session first
+        // First, check if we have a hash in the URL (initial redirect from email)
+        const searchParams = new URLSearchParams(window.location.search)
+        const hasVerificationHash = searchParams.has('token_hash')
+
+        if (!hasVerificationHash) {
+          // If no hash, we're probably in the post-303 state, wait for session
+          await new Promise((resolve) => setTimeout(resolve, 1000))
+        }
+
+        // Get the user's session
         const {
           data: { session },
         } = await supabase.auth.getSession()
 
-        // If we have a session and the user is confirmed, consider it a success
+        // If we have a session with email_confirmed_at, verification succeeded
         if (session?.user?.email_confirmed_at) {
+          console.log('Verification successful, user confirmed')
           setVerificationState('success')
-          router.push('/?verified=true')
+          router.replace('/?verified=true')
           return
         }
 
-        // If no immediate success, wait briefly and check again
+        // If we had a hash but no confirmed session, wait for the 303 redirect to complete
+        if (hasVerificationHash) {
+          console.log('Verification in progress, waiting for redirect...')
+          await new Promise((resolve) => setTimeout(resolve, 2000))
+
+          const {
+            data: { session: refreshedSession },
+          } = await supabase.auth.getSession()
+          if (refreshedSession?.user?.email_confirmed_at) {
+            console.log('Verification completed after redirect')
+            setVerificationState('success')
+            router.replace('/?verified=true')
+            return
+          }
+        }
+
+        // Final check with a longer timeout
+        console.log('Performing final verification check...')
         await new Promise((resolve) => setTimeout(resolve, 2000))
         const {
-          data: { session: refreshedSession },
+          data: { session: finalSession },
         } = await supabase.auth.getSession()
 
-        if (refreshedSession?.user?.email_confirmed_at) {
+        if (finalSession?.user?.email_confirmed_at) {
+          console.log('Verification successful in final check')
           setVerificationState('success')
-          router.push('/?verified=true')
+          router.replace('/?verified=true')
           return
         }
 
-        // If still no success, show error
+        // If we get here, verification failed
+        console.log('Verification failed, no confirmed session found')
         setVerificationState('error')
         setErrorMessage('Unable to verify email. Please try again.')
-        router.push(
+        router.replace(
           `/?error=session&message=${encodeURIComponent('Unable to verify email. Please try again.')}`
         )
       } catch (error) {
         console.error('Verification error:', error)
         setVerificationState('error')
         setErrorMessage('An unexpected error occurred')
-        router.push(
+        router.replace(
           `/?error=unknown&message=${encodeURIComponent('An unexpected error occurred. Please try again.')}`
         )
       }
