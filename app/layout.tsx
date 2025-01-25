@@ -39,6 +39,10 @@ export const metadata: Metadata = {
   title: 'LatentArena - Web3 Latent Platform on Solana',
   description: 'AI-powered Latent platform where creators meet judges on Solana blockchain',
   keywords: 'Solana, AI Judges, Latent Platform, Web3 Entertainment',
+  icons: {
+    icon: '/logo.png',
+    apple: '/logo.png',
+  },
   openGraph: {
     title: 'LatentArena - Web3 Latent Platform on Solana',
     description: 'AI-powered Latent platform where creators meet judges on Solana blockchain',
