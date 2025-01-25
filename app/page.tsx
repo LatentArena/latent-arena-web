@@ -7,6 +7,7 @@ import { motion } from 'framer-motion'
 import { LampDemo } from '@/components/ui/lamp'
 import { useEffect } from 'react'
 import { useToast } from '@/hooks/use-toast'
+import { AchievementsSection } from '@/components/achievements-section'
 
 export default function Home({
   searchParams,
@@ -70,7 +71,7 @@ export default function Home({
       </section>
 
       {/* Lamp Effect with Waitlist */}
-      <section id="waitlist" className="w-full scroll-mt-20 pb-16">
+      <section id="waitlist" className="w-full scroll-mt-20 pb-8">
         <LampDemo>
           <div className="container mx-auto px-4">
             <WaitlistForm />
@@ -78,9 +79,11 @@ export default function Home({
         </LampDemo>
       </section>
 
+      <AchievementsSection />
+
       {/* Footer */}
       <footer className="container mx-auto px-4 py-6 text-center text-sm text-zinc-500">
-        <p>© 2024 Latent Arena. All rights reserved.</p>
+        <p>© 2025 Latent Arena. All rights reserved.</p>
       </footer>
     </main>
   )

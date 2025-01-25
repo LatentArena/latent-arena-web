@@ -1,0 +1,117 @@
+'use client'
+
+import { motion } from 'framer-motion'
+import Link from 'next/link'
+import { GoogleLogo, AirbnbLogo, AdobeLogo } from './logos/company-logos'
+
+const textGenerateEffect = {
+  hidden: {
+    opacity: 0,
+    y: 20,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+  },
+}
+
+const companies = [
+  { name: 'Google', Logo: GoogleLogo },
+  { name: 'Airbnb', Logo: AirbnbLogo },
+  { name: 'Adobe', Logo: AdobeLogo },
+]
+
+export function AchievementsSection() {
+  const text = 'Achievements'
+
+  return (
+    <section className="mx-auto max-w-6xl px-4 pb-16">
+      <div className="mb-12 text-center">
+        <motion.div className="inline-block bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-600 bg-clip-text text-4xl font-bold text-transparent">
+          {text.split('').map((char, index) => (
+            <motion.span
+              key={index}
+              variants={textGenerateEffect}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              transition={{
+                duration: 0.1,
+                delay: index * 0.1,
+                ease: 'easeOut',
+              }}
+              className="inline-block"
+            >
+              {char}
+            </motion.span>
+          ))}
+        </motion.div>
+      </div>
+
+      <div className="grid gap-8 md:grid-cols-2">
+        {/* Hackathon Winner Card */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="group relative overflow-hidden rounded-2xl border border-zinc-800 bg-black/50 p-6 backdrop-blur-sm"
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-yellow-500/10 opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-100" />
+          <div className="relative">
+            <div className="mb-4 flex items-center gap-2">
+              <span className="text-3xl">🏆</span>
+              <h3 className="bg-gradient-to-r from-purple-400 via-pink-400 to-yellow-400 bg-clip-text text-xl font-bold text-transparent">
+                Unfold 2024 Champion
+              </h3>
+            </div>
+            <p className="mb-4 text-zinc-400">
+              Winner across 5 sponsor tracks including $APT(APTOS) at Unfold 2024 hackathon
+            </p>
+            <Link
+              href="https://devfolio.co/projects/latentfun-unfold-got-latent-b7a4"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center text-sm text-yellow-400 hover:text-yellow-300"
+            >
+              View Project →
+            </Link>
+          </div>
+        </motion.div>
+
+        {/* Team Credentials Card */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="group relative overflow-hidden rounded-2xl border border-zinc-800 bg-black/50 p-6 backdrop-blur-sm"
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-cyan-500/10 to-teal-500/10 opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-100" />
+          <div className="relative">
+            <div className="mb-4 flex items-center gap-2">
+              <span className="text-3xl">👨‍💻</span>
+              <h3 className="bg-gradient-to-r from-blue-400 via-cyan-400 to-teal-400 bg-clip-text text-xl font-bold text-transparent">
+                World-Class Tech Team
+              </h3>
+            </div>
+            <p className="text-zinc-400">
+              Being built by experienced devs from leading tech companies like Google, Airbnb, and
+              Adobe
+            </p>
+            <div className="mt-4 flex items-center gap-4">
+              {companies.map(({ name, Logo }) => (
+                <div
+                  key={name}
+                  className="flex h-12 w-12 items-center justify-center rounded-xl bg-zinc-800/50 p-2 text-zinc-400 transition-colors hover:bg-zinc-800/70"
+                >
+                  <Logo />
+                </div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  )
+}

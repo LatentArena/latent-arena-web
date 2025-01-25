@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { SparklesCore } from './ui/sparkles'
 import { ShimmerText } from './ui/shimmer-text'
 
+const subtitleText = 'Where viral meets verdict: Betting on content, powered by AI'
+
 export default function HeroSection() {
   return (
     <div className="relative flex flex-col items-center text-center">
@@ -44,14 +46,14 @@ export default function HeroSection() {
         <div className="absolute inset-0 h-full w-full bg-black [mask-image:radial-gradient(350px_200px_at_top,transparent_20%,white)]"></div>
       </div>
 
-      {/* Subtitle */}
+      {/* Subtitle with simple reveal animation */}
       <motion.p
-        className="mt-6 text-xl text-yellow-400 md:text-2xl"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2, duration: 0.5 }}
+        className="mt-6 bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-600 bg-clip-text text-xl text-transparent md:text-2xl"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
       >
-        Enter the Arena, Leave a Legend
+        {subtitleText}
       </motion.p>
 
       {/* CTA Buttons */}
@@ -76,7 +78,7 @@ export default function HeroSection() {
       </motion.div>
 
       {/* Video Demo Container */}
-      <motion.div
+      {/* <motion.div
         className="mt-16 w-full max-w-4xl overflow-hidden rounded-xl border border-yellow-400/20 bg-black/50 shadow-lg shadow-yellow-400/10"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -91,7 +93,7 @@ export default function HeroSection() {
             allowFullScreen
           />
         </div>
-      </motion.div>
+      </motion.div> */}
     </div>
   )
 }
