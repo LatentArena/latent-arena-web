@@ -36,16 +36,19 @@ const bungee = Bungee({
 })
 
 export const metadata: Metadata = {
-  title: 'LatentArena - Web3 Latent Platform on Solana',
-  description: 'AI-powered Latent platform where creators meet judges on Solana blockchain',
-  keywords: 'Solana, AI Judges, Latent Platform, Web3 Entertainment',
+  title: 'Latent Arena - Where Viral Meets Verdict',
+  description:
+    'Betting on content, powered by AI. Join the future of content creation and evaluation on Solana.',
+  keywords:
+    'Solana, AI Judges, Content Creation, Content Evaluation, Web3 Entertainment, Latent Arena',
   icons: {
     icon: '/logo.png',
     apple: '/logo.png',
   },
   openGraph: {
-    title: 'LatentArena - Web3 Latent Platform on Solana',
-    description: 'AI-powered Latent platform where creators meet judges on Solana blockchain',
+    title: 'Latent Arena - Where Viral Meets Verdict',
+    description:
+      'Betting on content, powered by AI. Join the future of content creation and evaluation on Solana.',
     images: ['/og-image.jpg'],
   },
   twitter: {
