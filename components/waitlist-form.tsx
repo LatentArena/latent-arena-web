@@ -36,52 +36,40 @@ export function WaitlistForm() {
       setIsLoading(true)
 
       // Check if email already exists in waitlist
-      const { data: existingEntry, error: checkError } = await supabase
+      const { data: existingEntries, error: checkError } = await supabase
         .from('waitlist')
         .select('email, verified')
         .eq('email', values.email)
-        .single()
 
-      if (checkError && checkError.code !== 'PGRST116') {
-        // PGRST116 means no rows returned, which is what we want
+      if (checkError) {
         throw checkError
       }
 
-      if (existingEntry) {
-        if (existingEntry.verified) {
-          toast({
-            title: 'Already Verified',
-            description: 'This email is already verified and on our waitlist.',
-            variant: 'destructive',
-          })
-          return
-        } else {
-          // Email exists but not verified, send new verification email
-          const { error: authError } = await supabase.auth.signInWithOtp({
-            email: values.email,
-            options: {
-              shouldCreateUser: true,
-              data: {
-                email: values.email,
-                wallet_address: values.wallet || null,
-                twitter_handle: values.twitter || null,
-              },
-              emailRedirectTo: `${window.location.origin}/auth/callback`,
-            },
-          })
+      const existingEntry = existingEntries?.[0]
 
-          if (authError) throw authError
-
-          toast({
-            title: 'Verification Email Resent',
-            description: 'Please check your email to verify your address.',
-          })
-          form.reset()
-          return
-        }
+      if (existingEntry?.verified) {
+        toast({
+          title: 'Already Verified',
+          description: 'This email is already verified and on our waitlist.',
+          variant: 'destructive',
+        })
+        return
       }
 
-      // If email doesn't exist, proceed with new signup
+      // Insert or update the waitlist entry first
+      const { error: dbError } = await supabase.from('waitlist').upsert(
+        {
+          email: values.email,
+          wallet_address: values.wallet || null,
+          twitter_handle: values.twitter || null,
+          verified: false,
+        },
+        { onConflict: 'email' }
+      )
+
+      if (dbError) throw dbError
+
+      // Then send the verification email
       const { error: authError } = await supabase.auth.signInWithOtp({
         email: values.email,
         options: {
@@ -97,29 +85,26 @@ export function WaitlistForm() {
 
       if (authError) throw authError
 
-      // Store the additional data in waitlist table
-      const { error: dbError } = await supabase.from('waitlist').insert([
-        {
-          email: values.email,
-          wallet_address: values.wallet || null,
-          twitter_handle: values.twitter || null,
-          verified: false,
-        },
-      ])
-
-      if (dbError) throw dbError
-
       toast({
-        title: 'Verification email sent!',
-        description:
-          "Please check your email to verify your address. You'll be added to the waitlist after verification.",
+        title: existingEntry ? 'Verification Email Resent' : 'Verification email sent!',
+        description: 'Please check your email to verify your address.',
       })
       form.reset()
     } catch (error) {
       console.error('Error:', error)
+      let errorMessage = 'There was a problem joining the waitlist. Please try again.'
+
+      // Check if it's an email sending error
+      if (error instanceof Error && error.message.includes('send email')) {
+        errorMessage =
+          'Unable to send verification email. Our team has been notified. Please try again later.'
+        // Log the error for monitoring
+        console.error('Email sending error:', error)
+      }
+
       toast({
         title: 'Error',
-        description: 'There was a problem joining the waitlist. Please try again.',
+        description: errorMessage,
         variant: 'destructive',
       })
     } finally {

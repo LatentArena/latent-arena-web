@@ -5,18 +5,26 @@ import Link from 'next/link'
 import { SparklesCore } from './ui/sparkles'
 import { ShimmerText } from './ui/shimmer-text'
 
-const subtitleText = 'Where viral meets verdict: Betting on content, powered by AI'
-
 export default function HeroSection() {
   return (
     <div className="relative flex flex-col items-center text-center">
-      {/* Title with subtle animation */}
-      <motion.div
+      {/* Top subtitle */}
+      <motion.p
+        className="mt-20 max-w-[90vw] bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-600 bg-clip-text px-4 text-center text-lg text-transparent sm:text-xl md:max-w-3xl md:px-0 md:text-2xl"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <ShimmerText className="font-cubao mt-20 text-6xl tracking-wide md:text-8xl">
+        Where Viral Meets Verdict
+      </motion.p>
+
+      {/* Title with subtle animation */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
+        <ShimmerText className="font-cubao mt-6 text-6xl tracking-wide md:text-8xl">
           LATENT
         </ShimmerText>
         <ShimmerText className="font-cubao mt-1 text-6xl tracking-wide md:text-8xl">
@@ -46,14 +54,14 @@ export default function HeroSection() {
         <div className="absolute inset-0 h-full w-full bg-black [mask-image:radial-gradient(350px_200px_at_top,transparent_20%,white)]"></div>
       </div>
 
-      {/* Subtitle with simple reveal animation */}
+      {/* Bottom subtitle */}
       <motion.p
         className="mt-6 max-w-[90vw] bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-600 bg-clip-text px-4 text-center text-lg text-transparent sm:text-xl md:max-w-3xl md:px-0 md:text-2xl"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.3 }}
+        transition={{ duration: 0.5, delay: 0.4 }}
       >
-        {subtitleText}
+        Betting on content, powered by AI
       </motion.p>
 
       {/* CTA Buttons */}
