@@ -1,11 +1,12 @@
 'use client'
 
-import HeroSection from '@/components/hero-section'
+import { useEffect, useState } from 'react'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useToast } from '@/hooks/use-toast'
 import { WaitlistForm } from '@/components/waitlist-form'
+import HeroSection from '@/components/hero-section'
 import { HowItWorks } from '@/components/how-it-works'
 import { LampDemo } from '@/components/ui/lamp'
-import { useEffect } from 'react'
-import { useToast } from '@/hooks/use-toast'
 import { AchievementsSection } from '@/components/achievements-section'
 
 export default function Home({
@@ -14,63 +15,58 @@ export default function Home({
   searchParams: { [key: string]: string | string[] | undefined }
 }) {
   const { toast } = useToast()
-  const verified = searchParams.verified === 'true'
-  const error = searchParams.error as string | undefined
-  const message = searchParams.message as string | undefined
+  const [isLoading, setIsLoading] = useState(true)
+  const [isSignedIn, setIsSignedIn] = useState(false)
+  const supabase = createClientComponentClient()
 
+  // Handle auth state
   useEffect(() => {
-    if (verified) {
+    const checkSession = async () => {
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession()
+        setIsSignedIn(!!session)
+      } catch (error) {
+        console.error('Session check error:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    checkSession()
+
+    // Subscribe to auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsSignedIn(!!session)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [supabase])
+
+  // Handle URL parameters
+  useEffect(() => {
+    if (searchParams.verified === 'true') {
       toast({
-        title: 'Email verified!',
-        description: "You've been successfully added to the waitlist. We'll be in touch soon.",
+        title: 'Welcome to Latent Arena!',
+        description: 'You&apos;ve successfully joined our waitlist.',
       })
-    } else if (error) {
-      const errorMessages: { [key: string]: { title: string; description: string } } = {
-        expired: {
-          title: 'Link Expired',
-          description:
-            message ||
-            'Your verification link has expired. Please go to the waitlist section and submit your email again for a new link.',
-        },
-        invalid: {
-          title: 'Invalid Link',
-          description:
-            message ||
-            "This verification link is invalid or has already been used. Please ensure you're using the most recent link sent to your email.",
-        },
-        unauthorized: {
-          title: 'Unauthorized',
-          description:
-            message ||
-            "You are not authorized to verify this email. Please ensure you're using the correct link.",
-        },
-        database: {
-          title: 'Database Error',
-          description:
-            message ||
-            'We encountered an issue updating your verification status. Please try again or contact support.',
-        },
-        session: {
-          title: 'Session Error',
-          description: message || "We couldn't establish a session. Please try signing up again.",
-        },
-        unknown: {
-          title: 'Verification Error',
-          description:
-            message ||
-            'An unexpected error occurred during verification. Please try again or contact our support team.',
-        },
+    } else if (searchParams.error) {
+      const messages: Record<string, string> = {
+        invalid_link: 'Invalid verification link. Please try again.',
+        verification_failed: 'Verification failed. Please request a new link.',
+        unknown: 'Something went wrong. Please try again.',
       }
 
-      const errorInfo = errorMessages[error] || errorMessages.unknown
       toast({
-        title: errorInfo.title,
-        description: errorInfo.description,
+        title: 'Error',
+        description: messages[searchParams.error as string] || 'An error occurred.',
         variant: 'destructive',
-        duration: 6000, // Show for 6 seconds since these are important messages
       })
     }
-  }, [verified, error, message, toast])
+  }, [searchParams, toast])
 
   return (
     <main className="flex min-h-screen flex-col bg-black text-white">
@@ -88,7 +84,20 @@ export default function Home({
       <section id="waitlist" className="w-full scroll-mt-20 pb-4">
         <LampDemo>
           <div className="container mx-auto px-4">
-            <WaitlistForm />
+            {isLoading ? (
+              <div className="text-center">
+                <div className="mb-4 text-4xl">⌛</div>
+                <p className="text-yellow-400">Loading...</p>
+              </div>
+            ) : isSignedIn ? (
+              <div className="text-center">
+                <div className="mb-4 text-4xl">🎮</div>
+                <h2 className="mb-2 text-2xl font-bold text-white">You&apos;re on the List!</h2>
+                <p className="text-yellow-400">Thanks for joining Latent Arena&apos;s waitlist.</p>
+              </div>
+            ) : (
+              <WaitlistForm />
+            )}
           </div>
         </LampDemo>
       </section>

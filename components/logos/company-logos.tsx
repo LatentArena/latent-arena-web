@@ -46,3 +46,13 @@ export function AdobeLogo() {
     </svg>
   )
 }
+
+export function ToptalLogo() {
+  return (
+    <img
+      src="https://upload.wikimedia.org/wikipedia/commons/2/20/Toptal_Logo.svg"
+      alt="Toptal"
+      className="h-6 w-6"
+    />
+  )
+}
