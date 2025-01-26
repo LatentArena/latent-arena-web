@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/hooks/use-toast'
-import { supabase } from '@/lib/supabase'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 const formSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -36,8 +36,7 @@ const formSchema = z.object({
 export function WaitlistForm() {
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
-  const [submitCount, setSubmitCount] = useState(0)
-  const lastSubmitTime = useRef<number>(0)
+  const supabase = createClientComponentClient()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -45,31 +44,19 @@ export function WaitlistForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      // Rate limiting: Allow only 3 submissions per minute
-      const now = Date.now()
-      if (submitCount >= 3 && now - lastSubmitTime.current < 60000) {
-        toast({
-          title: 'Too Many Attempts',
-          description: 'Please wait a minute before trying again.',
-          variant: 'destructive',
-        })
-        return
-      }
-
       setIsLoading(true)
-      setSubmitCount((prev) => prev + 1)
-      lastSubmitTime.current = now
+      console.log('Submitting form with values:', values)
 
-      // Use signUp for new users
-      const { error: authError } = await supabase.auth.signUp({
+      const callbackUrl = `${window.location.origin}/auth/callback`
+      console.log('Using callback URL:', callbackUrl)
+
+      // Send magic link using signInWithOtp
+      const { data, error: authError } = await supabase.auth.signInWithOtp({
         email: values.email,
-        password: crypto.randomUUID(), // Generate a random password since we won't use it
         options: {
-          emailRedirectTo: process.env.NEXT_PUBLIC_SITE_URL?.startsWith('http://localhost')
-            ? `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`
-            : 'https://latentarena.xyz/auth/callback',
+          emailRedirectTo: callbackUrl,
+          shouldCreateUser: true,
           data: {
-            email: values.email,
             wallet_address: values.wallet || '',
             twitter_handle: values.twitter || '',
             joined_waitlist_at: new Date().toISOString(),
@@ -77,55 +64,39 @@ export function WaitlistForm() {
         },
       })
 
+      console.log('Auth response:', {
+        data,
+        error: authError,
+        redirectTo: callbackUrl,
+      })
+
       if (authError) {
-        // Handle rate limiting error specifically
-        if (authError.message.includes('rate limit')) {
-          toast({
-            title: 'Too Many Attempts',
-            description: 'Please wait a few minutes before requesting another verification email.',
-            variant: 'destructive',
-          })
-          return
-        }
-        // If user exists but not verified, resend verification email
-        if (authError.message.includes('User already registered')) {
-          const { error: resendError } = await supabase.auth.resend({
-            type: 'signup',
-            email: values.email,
-            options: {
-              emailRedirectTo: process.env.NEXT_PUBLIC_SITE_URL?.startsWith('http://localhost')
-                ? `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`
-                : 'https://latentarena.xyz/auth/callback',
-            },
-          })
-          if (resendError) throw resendError
-          toast({
-            title: 'Verification Email Resent',
-            description: 'Please check your email to verify your address.',
-          })
-          return
-        }
+        console.error('Auth error:', {
+          message: authError.message,
+          status: authError?.status,
+          name: authError?.name,
+        })
         throw authError
       }
 
       toast({
-        title: 'Verification Email Sent',
-        description: 'Please check your email to verify your address.',
+        title: 'Check your email',
+        description: 'We sent you a magic link to verify your email and join the waitlist!',
       })
+
       form.reset()
     } catch (error) {
-      console.error('Error:', error)
+      console.error('Form submission error:', error)
       let errorMessage = 'There was a problem joining the waitlist. Please try again.'
 
       if (error instanceof Error) {
-        if (error.message.includes('send email')) {
-          errorMessage =
-            'Unable to send verification email. Our team has been notified. Please try again later.'
-        } else if (error.message.includes('User already registered')) {
-          errorMessage =
-            'This email is already registered. Please check your inbox for the verification email or try signing up with a different email.'
+        if (error.message.includes('rate limit')) {
+          errorMessage = 'Please wait a few minutes before requesting another verification email.'
         }
-        console.error('Detailed error:', error)
+        console.error('Detailed error:', {
+          message: error.message,
+          name: error.name,
+        })
       }
 
       toast({
@@ -139,74 +110,72 @@ export function WaitlistForm() {
   }
 
   return (
-    <section>
-      <div className="container mx-auto max-w-md px-4">
-        <h2 className="font-display mb-12 text-center text-4xl font-bold text-white">
-          Join the Waitlist
-        </h2>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="your@email.com"
-                      className="border-yellow-400/30 bg-black/50 text-white placeholder:text-yellow-400/50"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage className="text-yellow-400" />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="wallet"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">Solana Wallet (Optional)</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Solana wallet address"
-                      className="border-yellow-400/30 bg-black/50 text-white placeholder:text-yellow-400/50"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage className="text-yellow-400" />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="twitter"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">Twitter Handle (Optional)</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="@username"
-                      className="border-yellow-400/30 bg-black/50 text-white placeholder:text-yellow-400/50"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage className="text-yellow-400" />
-                </FormItem>
-              )}
-            />
-            <Button
-              type="submit"
-              className="w-full bg-yellow-400 text-black transition-colors hover:bg-yellow-500"
-              disabled={isLoading}
-            >
-              {isLoading ? 'Submitting...' : 'Join Waitlist'}
-            </Button>
-          </form>
-        </Form>
-      </div>
-    </section>
+    <div className="container mx-auto max-w-md px-4">
+      <h2 className="font-display mb-12 text-center text-4xl font-bold text-white">
+        Join the Waitlist
+      </h2>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-white">Email</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="your@email.com"
+                    className="border-yellow-400/30 bg-black/50 text-white placeholder:text-yellow-400/50"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage className="text-yellow-400" />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="wallet"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-white">Solana Wallet (Optional)</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Solana wallet address"
+                    className="border-yellow-400/30 bg-black/50 text-white placeholder:text-yellow-400/50"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage className="text-yellow-400" />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="twitter"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-white">Twitter Handle (Optional)</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="@username"
+                    className="border-yellow-400/30 bg-black/50 text-white placeholder:text-yellow-400/50"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage className="text-yellow-400" />
+              </FormItem>
+            )}
+          />
+          <Button
+            type="submit"
+            className="w-full bg-yellow-400 text-black transition-colors hover:bg-yellow-500"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Sending...' : 'Join Waitlist'}
+          </Button>
+        </form>
+      </Form>
+    </div>
   )
 }

@@ -2,12 +2,13 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { GoogleLogo, AirbnbLogo, AdobeLogo } from './logos/company-logos'
+import { GoogleLogo, AirbnbLogo, AdobeLogo, ToptalLogo } from './logos/company-logos'
 
 const companies = [
   { name: 'Google', Logo: GoogleLogo },
   { name: 'Airbnb', Logo: AirbnbLogo },
   { name: 'Adobe', Logo: AdobeLogo },
+  { name: 'Toptal', Logo: ToptalLogo },
 ]
 
 export function AchievementsSection() {
@@ -21,7 +22,7 @@ export function AchievementsSection() {
         transition={{ duration: 0.5 }}
       >
         <h2 className="inline-block bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-600 bg-clip-text text-4xl font-bold text-transparent">
-          Achievements
+          Background
         </h2>
       </motion.div>
 
@@ -43,7 +44,8 @@ export function AchievementsSection() {
               </h3>
             </div>
             <p className="mb-4 text-zinc-400">
-              Winner across 5 sponsor tracks including $APT(APTOS) at Unfold 2024 hackathon
+              Winner across 5 sponsor tracks including the main track at Unfold 2024 hackathon, the
+              second largest crypto Hackthon in India.
             </p>
             <Link
               href="https://devfolio.co/projects/latentfun-unfold-got-latent-b7a4"
@@ -63,12 +65,12 @@ export function AchievementsSection() {
             <div className="mb-4 flex items-center gap-2">
               <span className="text-3xl">👨‍💻</span>
               <h3 className="bg-gradient-to-r from-blue-400 via-cyan-400 to-teal-400 bg-clip-text text-xl font-bold text-transparent">
-                World-Class Tech Team
+                Seasoned developement team
               </h3>
             </div>
             <p className="text-zinc-400">
-              Being built by experienced devs from leading tech companies like Google, Airbnb, and
-              Adobe
+              Being built by experienced devs from leading tech companies and contributions to
+              well-known open source projects.
             </p>
             <div className="mt-4 flex items-center gap-4">
               {companies.map(({ name, Logo }) => (
