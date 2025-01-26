@@ -23,17 +23,27 @@ export default function AuthCallbackPage() {
           switch (errorCode) {
             case 'otp_expired':
               router.push(
-                `/?error=expired&message=${encodeURIComponent('Email verification link has expired. Please request a new one.')}`
+                `/?error=expired&message=${encodeURIComponent('Your verification link has expired. Please go to the waitlist section and submit your email again for a new link.')}`
               )
               return
             case 'access_denied':
               router.push(
-                `/?error=invalid&message=${encodeURIComponent('Invalid verification link. Please try again.')}`
+                `/?error=invalid&message=${encodeURIComponent("This verification link is invalid. Please ensure you're using the most recent link sent to your email.")}`
+              )
+              return
+            case 'invalid_grant':
+              router.push(
+                `/?error=invalid&message=${encodeURIComponent('This verification link has already been used. Please request a new one if needed.')}`
+              )
+              return
+            case 'unauthorized':
+              router.push(
+                `/?error=unauthorized&message=${encodeURIComponent("You are not authorized to verify this email. Please ensure you're using the correct link.")}`
               )
               return
             default:
               router.push(
-                `/?error=unknown&message=${encodeURIComponent(errorDescription || 'An error occurred during verification.')}`
+                `/?error=unknown&message=${encodeURIComponent(errorDescription || 'An error occurred during verification. Please try again or contact support.')}`
               )
               return
           }
