@@ -51,7 +51,7 @@ export default function Home({
     if (searchParams.verified === 'true') {
       toast({
         title: 'Welcome to Latent Arena!',
-        description: 'You&apos;ve successfully joined our waitlist.',
+        description: 'Hooray! You have successfully joined our waitlist.',
       })
     } else if (searchParams.error) {
       const messages: Record<string, string> = {

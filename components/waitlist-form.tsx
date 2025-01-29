@@ -81,7 +81,7 @@ export function WaitlistForm() {
 
       toast({
         title: 'Check your email',
-        description: 'We sent you a magic link to verify your email and join the waitlist!',
+        description: 'We have sent the details on your email!',
       })
 
       form.reset()
@@ -112,7 +112,7 @@ export function WaitlistForm() {
   return (
     <div className="container mx-auto max-w-md px-4">
       <h2 className="font-display mb-12 text-center text-4xl font-bold text-white">
-        Join the Waitlist
+        Join the Action
       </h2>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
