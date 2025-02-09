@@ -82,6 +82,7 @@
     "zustand": "^5.0.3"
   },
   "devDependencies": {
+    "@cloudflare/next-on-pages": "^1.13.7",
     "@types/node": "22.10.7",
     "@types/react": "18.3.18",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
