@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useToast } from '@/hooks/use-toast'
 import { WaitlistForm } from '@/components/waitlist-form'
@@ -9,12 +10,9 @@ import { HowItWorks } from '@/components/how-it-works'
 import { LampDemo } from '@/components/ui/lamp'
 import { AchievementsSection } from '@/components/achievements-section'
 
-export default function Home({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined }
-}) {
+export default function Home() {
   const { toast } = useToast()
+  const searchParams = useSearchParams()
   const [isLoading, setIsLoading] = useState(true)
   const [isSignedIn, setIsSignedIn] = useState(false)
   const supabase = createClientComponentClient()
@@ -48,12 +46,12 @@ export default function Home({
 
   // Handle URL parameters
   useEffect(() => {
-    if (searchParams.verified === 'true') {
+    if (searchParams.get('verified') === 'true') {
       toast({
         title: 'Welcome to Latent Arena!',
         description: 'Hooray! You have successfully joined our waitlist.',
       })
-    } else if (searchParams.error) {
+    } else if (searchParams.get('error')) {
       const messages: Record<string, string> = {
         invalid_link: 'Invalid verification link. Please try again.',
         verification_failed: 'Verification failed. Please request a new link.',
@@ -62,7 +60,7 @@ export default function Home({
 
       toast({
         title: 'Error',
-        description: messages[searchParams.error as string] || 'An error occurred.',
+        description: messages[searchParams.get('error') as string] || 'An error occurred.',
         variant: 'destructive',
       })
     }

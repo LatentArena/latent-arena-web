@@ -2,14 +2,11 @@
 
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { JUDGES } from './utils'
+import { JUDGES, getActiveJudges } from './utils'
 
 export function JudgeRotationIndicator() {
   const currentDay = new Date().getDay()
-  const activeJudges = JUDGES.filter((_, index) => {
-    const adjustedIndex = (index + currentDay) % JUDGES.length
-    return adjustedIndex < 4
-  })
+  const activeJudges = getActiveJudges()
 
   return (
     <div className="mb-8 rounded-xl bg-zinc-900/50 p-6 backdrop-blur-sm">

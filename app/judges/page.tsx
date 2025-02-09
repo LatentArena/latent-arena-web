@@ -6,16 +6,6 @@ import Image from 'next/image'
 import { JUDGES } from './utils'
 import { JudgeRotationIndicator, StatBar } from './components'
 
-// Add helper function to get active judges
-export function getActiveJudges() {
-  const currentDay = new Date().getDay()
-  return JUDGES.filter((judge, index) => {
-    // Get 4 judges based on current day rotation
-    const adjustedIndex = (index + currentDay) % JUDGES.length
-    return adjustedIndex < 4
-  })
-}
-
 export default function JudgesPage() {
   const [hoveredCard, setHoveredCard] = useState<string | null>(null)
 
