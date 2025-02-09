@@ -1,9 +1,10 @@
 'use client'
 
-import { SolanaIcon } from '@/components/icons/solana'
+import { AnimatePresence, motion } from 'framer-motion'
+import { useEffect, useState } from 'react'
 import { useWalletStore } from '@/lib/stores/wallet'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useState, useEffect } from 'react'
+import { SolanaIcon } from '@/components/icons/solana'
+import { WalletIcon } from 'lucide-react'
 
 export function WalletDisplay() {
   const [isOpen, setIsOpen] = useState(false)
@@ -14,8 +15,10 @@ export function WalletDisplay() {
   useEffect(() => {
     if (balance !== prevBalance) {
       setShowDiff(true)
-      const timer = setTimeout(() => setShowDiff(false), 2000)
-      setPrevBalance(balance)
+      const timer = setTimeout(() => {
+        setShowDiff(false)
+        setPrevBalance(balance)
+      }, 2000)
       return () => clearTimeout(timer)
     }
   }, [balance, prevBalance])
@@ -28,8 +31,8 @@ export function WalletDisplay() {
       className="group relative flex items-center gap-2 rounded-full bg-zinc-900 px-4 py-2 transition hover:bg-zinc-800"
     >
       <div className="flex items-center gap-2">
-        <div className="h-8 w-8 overflow-hidden rounded-full bg-gradient-to-br from-purple-500 to-blue-500">
-          <div className="h-full w-full bg-[url('https://api.dicebear.com/7.x/shapes/svg?seed=wallet123')] bg-cover" />
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-800 group-hover:bg-zinc-700">
+          <WalletIcon className="h-4 w-4" />
         </div>
         <div className="flex items-center gap-1.5">
           <SolanaIcon className="h-4 w-4" />
@@ -42,7 +45,7 @@ export function WalletDisplay() {
             {balance.toFixed(2)}
           </motion.span>
           <AnimatePresence>
-            {showDiff && (
+            {showDiff && balanceDiff !== 0 && (
               <motion.span
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}

@@ -47,16 +47,23 @@ export const useScoreStore = create<ScoreState>((set, get) => ({
   // Calculate expected value for a given range
   calculateExpectedValue: (range: number) => {
     const { alpha, beta } = get()
-    const mean = (alpha / (alpha + beta)) * SCORE_CONFIG.MAX
-    const variance =
-      ((alpha * beta) / (Math.pow(alpha + beta, 2) * (alpha + beta + 1))) *
-      Math.pow(SCORE_CONFIG.MAX, 2)
 
-    // Probability of falling within range
-    const standardDev = Math.sqrt(variance)
-    const probability = 0.68 // Approximately 68% for ±1 standard deviation
+    // Calculate probability of falling within range using Beta CDF
+    const targetScore = range * SCORE_CONFIG.MAX
+    const lowerBound = Math.max(0, targetScore - (range * SCORE_CONFIG.MAX) / 2)
+    const upperBound = Math.min(SCORE_CONFIG.MAX, targetScore + (range * SCORE_CONFIG.MAX) / 2)
 
-    return probability * range
+    // Integrate Beta PDF over the range to get probability
+    const steps = 100
+    const dx = (upperBound - lowerBound) / steps
+    let probability = 0
+
+    for (let i = 0; i < steps; i++) {
+      const x = lowerBound + i * dx
+      probability += get().calculateBetaPDF(x) * dx
+    }
+
+    return probability
   },
 
   // Update distribution parameters based on historical data

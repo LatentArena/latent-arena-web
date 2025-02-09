@@ -15,27 +15,24 @@ export default function DemoLayout({ children }: { children: React.ReactNode }) 
   return (
     <div className={`${inter.className} min-h-screen bg-black text-white`}>
       <div className="fixed left-0 right-0 top-0 z-50 border-b border-gray-800 bg-black/50 backdrop-blur-xl">
-        <div className="container mx-auto flex items-center justify-between px-4 py-3">
-          <div className="flex items-center gap-8">
+        <div className="container mx-auto flex items-center justify-between px-4 py-2">
+          <div className="flex items-center gap-10">
             <Image
               src="/logo.png"
               alt="LatentArena"
-              width={140}
-              height={32}
-              className="h-16 w-auto"
+              width={160}
+              height={36}
+              className="h-14 w-auto"
             />
-            <nav className="hidden space-x-6 md:flex">
-              <a href="/demo/browse" className="text-gray-300 transition hover:text-white">
+            <nav className="hidden space-x-8 text-sm md:flex">
+              <a href="/demo/browse" className="text-gray-400 transition hover:text-white">
                 Browse
               </a>
-              <a href="/demo/predict/example" className="text-gray-300 transition hover:text-white">
-                Predict
-              </a>
-              <a href="/demo/judges" className="text-gray-300 transition hover:text-white">
+              <a href="/demo/judges" className="text-gray-400 transition hover:text-white">
                 Judges
               </a>
-              <a href="/demo/extension" className="text-gray-300 transition hover:text-white">
-                Extension
+              <a href="/demo/extension" className="text-gray-400 transition hover:text-white">
+                Get Extension
               </a>
             </nav>
           </div>

@@ -22,13 +22,17 @@ export const useRewardStore = create<RewardState>((set, get) => ({
     // Get probability of winning from score store
     const winProbability = useScoreStore.getState().calculateExpectedValue(range)
 
-    // Calculate expected number of winners
-    const expectedWinners = get().calculateWinnerCount(range, 10) // Example participant count
+    // Calculate expected number of winners using overlap probability
+    const expectedWinners = get().calculateWinnerCount(range, 10) // Using 10 as example participant count
 
     // Apply formula from whitepaper:
-    // EV(Ri) = P(win|Ri) × M(Ri) × S × (1/N(Ri))
+    // EV(Ri) = P(win|Ri) × M(Ri) × S × (1/N(Ri)) × (1 - platform_fee)
     const expectedValue =
-      winProbability * multiplier * totalStakePool * (1 / expectedWinners) * (1 - PLATFORM_FEE) // Account for platform fee
+      winProbability *
+      multiplier *
+      totalStakePool *
+      (1 / Math.max(1, expectedWinners)) *
+      (1 - PLATFORM_FEE)
 
     return expectedValue
   },

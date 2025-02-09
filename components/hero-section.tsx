@@ -27,10 +27,10 @@ export default function HeroSection() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
       >
-        <ShimmerText className="font-cubao mt-4 text-6xl tracking-wide md:text-8xl">
+        <ShimmerText className="mt-4 font-cubao text-6xl tracking-wide md:text-8xl">
           LATENT
         </ShimmerText>
-        <ShimmerText className="font-cubao mt-1 text-6xl tracking-wide md:text-8xl">
+        <ShimmerText className="mt-1 font-cubao text-6xl tracking-wide md:text-8xl">
           ARENA
         </ShimmerText>
       </motion.div>
@@ -89,23 +89,25 @@ export default function HeroSection() {
         </Link>
       </motion.div>
 
-      {/* Video Demo Container */}
-      {/* <motion.div
-        className="mt-16 w-full max-w-4xl overflow-hidden rounded-xl border border-yellow-400/20 bg-black/50 shadow-lg shadow-yellow-400/10"
+      {/* Video Container */}
+      <motion.div
+        className="mt-16 w-[80vw] px-4 md:px-8 lg:px-16"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6, duration: 0.5 }}
       >
-        <div className="aspect-video">
-          <iframe
-            className="h-full w-full"
-            src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-            title="Latent Arena Demo"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
+        <div className="relative overflow-hidden rounded-xl border border-yellow-400/20 bg-black/50 shadow-lg shadow-yellow-400/10">
+          <div className="aspect-video w-full">
+            <iframe
+              className="h-full w-full"
+              src="https://www.youtube.com/embed/vUSkus8AVK4"
+              title="Latent Arena Teaser"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
         </div>
-      </motion.div> */}
+      </motion.div>
     </div>
   )
 }

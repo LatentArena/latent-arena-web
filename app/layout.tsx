@@ -39,6 +39,7 @@ export const metadata: Metadata = {
   title: 'Latent Arena - Where Viral Meets Verdict',
   description:
     'Betting on content, powered by AI. Join the future of content creation and evaluation on Solana.',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://latentarena.xyz'),
   keywords:
     'Solana, AI Judges, Content Creation, Content Evaluation, Web3 Entertainment, Latent Arena',
   icons: {

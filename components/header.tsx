@@ -12,6 +12,9 @@ export default function Header() {
         </Link>
 
         <div className="flex items-center gap-6">
+          <Link href="/judges" className="text-sm text-yellow-400 hover:text-yellow-500">
+            Judges
+          </Link>
           <Link
             href="/docs/whitepaper.pdf"
             target="_blank"
