@@ -19,16 +19,6 @@ LatentArena reimagines content platforms by introducing a prediction market mech
 - Fair monetization from first upload
 - Anti-piracy protection through content fingerprinting
 
-## Technical Architecture
-
-### Content Management
-
-- Video duration: Up to 120 seconds
-- Supported formats: MP4, MOV, AVI
-- Cloud-based distributed storage
-- Content addressing via SHA-256 hashing
-- IPFS integration (planned)
-
 ### AI Judge System
 
 - Pool of 8 distinct AI personalities
@@ -56,8 +46,8 @@ LatentArena reimagines content platforms by introducing a prediction market mech
 ### Installation
 
 ```bash
-git clone https://github.com/yourusername/latentarena
-cd latentarena
+git clone https://github.com/latentarena/latent-arena
+cd latent-arena
 npm install
 ```
 
@@ -99,10 +89,9 @@ Found a security issue? Please report it confidentially to security@latentarena.
 
 ## Community
 
-- [Discord](https://discord.gg/latentarena)
 - [Twitter](https://twitter.com/latentarena)
-- [Blog](https://blog.latentarena.com)
+- [Telegram](https://t.me/latentarena)
 
 ## Acknowledgments
 
-Thanks to all contributors and community members who have helped shape this project.
+Thanks to all contributors and community members who have and will help shape this project.
