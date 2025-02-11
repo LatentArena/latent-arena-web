@@ -26,6 +26,9 @@ export default function Header() {
     { href: '/connect', label: 'Connect' },
   ]
 
+  const dexScreenerUrl =
+    'https://dexscreener.com/solana/6umdnfdjre9qvuaabh7qam64zhycopnjxrnss8s16wmc'
+
   const socialLinks = [
     {
       href: 'https://x.com/latentarena',
@@ -65,6 +68,26 @@ export default function Header() {
                 {link.label}
               </Link>
             ))}
+            <a
+              href={dexScreenerUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex items-center gap-2 rounded-full bg-yellow-400 px-4 py-2 text-sm font-semibold text-black transition-all hover:bg-yellow-500"
+            >
+              $LATENT on DexScreener
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M5.22 14.78a.75.75 0 001.06 0l7.22-7.22v5.69a.75.75 0 001.5 0v-7.5a.75.75 0 00-.75-.75h-7.5a.75.75 0 000 1.5h5.69l-7.22 7.22a.75.75 0 000 1.06z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </a>
             {socialLinks.map((link) => (
               <Link
                 key={link.href}
@@ -139,6 +162,27 @@ export default function Header() {
                       {link.label}
                     </Link>
                   ))}
+                  <a
+                    href={dexScreenerUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group mx-4 mt-2 inline-flex items-center gap-2 rounded-full bg-yellow-400 px-4 py-2 text-sm font-semibold text-black transition-all hover:bg-yellow-500"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    View on DexScreener
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M5.22 14.78a.75.75 0 001.06 0l7.22-7.22v5.69a.75.75 0 001.5 0v-7.5a.75.75 0 00-.75-.75h-7.5a.75.75 0 000 1.5h5.69l-7.22 7.22a.75.75 0 000 1.06z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </a>
                 </div>
 
                 {/* Social Links */}
